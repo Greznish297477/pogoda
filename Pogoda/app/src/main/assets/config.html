@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--p:#3560c9;--op:#fff;--pc:#d9e4ff;--opc:#0a1a40;--sc:#dde3f2;--bg:#f9faff;--sf:#eef1fa;--sf2:#e2e7f4;--tx:#141a29;--tx2:#4a5266;--r:28px}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--tx);font-family:"Google Sans","Roboto",system-ui,sans-serif;padding:14px 16px 40px;max-width:560px;margin:0 auto;animation:in .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(20px)}}
+h1{font-size:22px;font-weight:600;margin:6px 4px 4px}.sub{color:var(--tx2);font-size:14px;margin:0 4px 14px}
+h2{font-size:15px;font-weight:600;margin:20px 6px 10px;color:var(--tx2)}
+.card{background:var(--sf);border-radius:var(--r);padding:8px 16px;margin-bottom:12px}
+.wprev{padding:20px;background:var(--sf2);border-radius:var(--r);margin-bottom:12px;background-image:radial-gradient(circle at 20% 20%,var(--pc),transparent 60%)}
+.widget{display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:18px;color:var(--wt);transition:.3s}
+.widget .l{text-align:left}.widget .rr{text-align:right;padding-left:12px}
+.widget.dv .rr{border-left:2px solid currentColor;border-left-color:color-mix(in srgb,currentColor 30%,transparent)}
+.wclock{font-size:calc(var(--fs)*1px);font-weight:300;line-height:1;letter-spacing:-2px}.wclock small{font-size:.35em;opacity:.7;letter-spacing:0}
+.wdate{font-size:14px;margin-top:6px;opacity:.85}.wtemp{font-size:calc(var(--fs)*.8px);font-weight:300;line-height:1}
+.wst{font-size:14px;opacity:.85;margin-top:6px}.wfc{grid-column:1/3;display:flex;justify-content:space-between;margin-top:14px;font-size:13px}.wfc div{text-align:center}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 4px;font-size:15px}
+input[type=range]{width:150px;accent-color:var(--p)}
+.sw{width:50px;height:30px;border-radius:15px;background:var(--sf2);border:2px solid var(--tx2);position:relative;cursor:pointer;transition:.25s;flex:none}
+.sw::after{content:"";position:absolute;left:4px;top:4px;width:18px;height:18px;border-radius:50%;background:var(--tx2);transition:.25s}
+.sw.on{background:var(--p);border-color:var(--p)}.sw.on::after{left:24px;top:2px;width:22px;height:22px;background:var(--op)}
+.seg{display:flex;background:var(--sf2);border-radius:20px;padding:3px}.seg button{border:0;background:none;color:var(--tx);font:inherit;font-size:13px;padding:7px 12px;border-radius:17px;cursor:pointer;transition:.25s}.seg button.on{background:var(--p);color:var(--op)}
+.btn{border:0;background:var(--p);color:var(--op);font:inherit;padding:14px 20px;border-radius:24px;cursor:pointer;width:100%;font-size:16px;transition:transform .2s;margin-top:8px}.btn:active{transform:scale(.95)}
+.btn.t{background:var(--sc);color:var(--tx)}
+.card>*{animation:up .5s cubic-bezier(.2,.8,.2,1) backwards}@keyframes up{from{opacity:0;transform:translateY(14px)}}
+</style></head>
+<body><div id="app"></div>
+<script>
+const $=s=>document.querySelector(s),pad=n=>String(n).padStart(2,"0");
+const DN=["Вс","Пн","Вт","Ср","Чт","Пт","Сб"],MN=["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+const NAMES={cw:"Часы и погода",cp:"Погода",fc:"Прогноз",ck:"Часы"};
+const DEF={cw:{fs:44,rad:32,alpha:90,col:"p",sec:false,date:true,dv:true,fc:true,city:true,desc:true,h24:true},
+ cp:{fs:40,rad:32,alpha:90,col:"p",city:true,desc:true},fc:{fs:34,rad:32,alpha:90,col:"p",city:true},ck:{fs:52,rad:32,alpha:90,col:"p",sec:false,date:true,h24:true}};
+const KEYS={cw:["sec","date","dv","fc","city","desc","h24"],cp:["city","desc"],fc:["city"],ck:["sec","date","h24"]};
+const SW={sec:"Часы с секундами",date:"Показывать дату",dv:"Разделитель",fc:"Прогноз по часам внизу",city:"Показывать город",desc:"Описание погоды",h24:"24-часовой формат"};
+const DF=["Пн|☀️|12°","Вт|⛅|10°","Ср|🌧️|8°","Чт|🌤️|11°","Пт|☁️|9°"];
+let I={kind:"cw",seed:220,theme:"auto"},C={},kind="cw";
+try{I=JSON.parse(Cfg.init())}catch(e){}
+kind=I.kind||"cw";C=Object.assign({},DEF[kind],I.cfg||{});C.col="p";
+
+function palette(){
+ const am=I.theme==="amoled",dark=am||I.theme==="dark"||(I.theme==="auto"&&matchMedia("(prefers-color-scheme:dark)").matches),h=I.seed,r=document.documentElement.style;
+ const v=dark?{p:`hsl(${h},70%,80%)`,op:`hsl(${h},60%,18%)`,pc:`hsl(${h},45%,28%)`,opc:`hsl(${h},70%,92%)`,sc:`hsl(${h+25},22%,26%)`,bg:`hsl(${h},14%,9%)`,sf:`hsl(${h},14%,14%)`,sf2:`hsl(${h},14%,20%)`,tx:`hsl(${h},15%,90%)`,tx2:`hsl(${h},10%,68%)`}
+ :{p:`hsl(${h},58%,40%)`,op:"#fff",pc:`hsl(${h},75%,89%)`,opc:`hsl(${h},60%,12%)`,sc:`hsl(${h+25},40%,87%)`,bg:`hsl(${h},40%,98%)`,sf:`hsl(${h},30%,94%)`,sf2:`hsl(${h},28%,89%)`,tx:`hsl(${h},25%,10%)`,tx2:`hsl(${h},12%,36%)`};
+ if(am)Object.assign(v,{bg:"#000",sf:`hsl(${h},10%,7%)`,sf2:`hsl(${h},10%,13%)`});
+ for(const k in v)r.setProperty("--"+k,v[k]);
+}
+const names=()=>C.col=="p"?["p","op"]:C.col=="sc"?["sc","tx"]:["sf2","tx"];
+const cols=()=>names().map(n=>`var(--${n})`);
+function prev(){
+ const [b,f]=cols(),n=new Date();let h=n.getHours();if(C.h24===false)h=h%12||12;
+ const tm=`${C.h24===false?h:pad(h)}:${pad(n.getMinutes())}${C.sec?`<small>:${pad(n.getSeconds())}</small>`:""}`;
+ const dt=C.date?`<div class="wdate">${DN[n.getDay()]}, ${n.getDate()} ${MN[n.getMonth()]}</div>`:"";
+ const t=`${I.e||"⛅"} ${I.t||"12°"}`,ds=C.desc===false?"":(I.ds||"Облачно"),ct=C.city===false?"":`📍 ${I.n||"Москва"}`;
+ const strip=k=>`<div class="wfc">${(I.f&&I.f.length?I.f:DF).slice(0,k).map(x=>{const q=x.split("|");return`<div>${q[0]}<br>${q[1]}<br>${q[2]}</div>`}).join("")}</div>`;
+ const st=`--fs:${C.fs};--wt:${f};border-radius:${C.rad}px;background:color-mix(in srgb,${b} ${C.alpha}%,transparent)`;
+ let h2;
+ if(kind=="ck")h2=`<div class="widget" style="display:block;${st}"><div class="wclock">${tm}</div>${dt}</div>`;
+ else if(kind=="cp")h2=`<div class="widget" style="display:block;text-align:center;${st}"><div class="wst">${ct}</div><div class="wtemp" style="font-size:${C.fs*1.2}px">${t}</div><div class="wst">${ds}</div></div>`;
+ else if(kind=="fc")h2=`<div class="widget" style="${st}"><div class="l"><div class="wtemp">${t}</div><div class="wst">${ds}</div></div><div class="rr"><div class="wst">${ct}</div></div>${strip(5)}</div>`;
+ else h2=`<div class="widget ${C.dv?"dv":""}" style="${st}"><div class="l"><div class="wclock">${tm}</div>${dt}</div><div class="rr"><div class="wtemp">${t}</div><div class="wst">${ds}<br>${ct}</div></div>${C.fc?strip(4):""}</div>`;
+ $("#pv").innerHTML=h2;
+}
+function set(k,v,live){C[k]=v;if(live)prev();else render()}
+function hex(c){const x=document.createElement("canvas").getContext("2d");x.fillStyle=c;return x.fillStyle}
+function save(){
+ const cs=getComputedStyle(document.documentElement),[b,f]=names();
+ C.bg=hex(cs.getPropertyValue("--"+b).trim());C.fg=hex(cs.getPropertyValue("--"+f).trim());
+ try{Cfg.save(JSON.stringify(C))}catch(e){alert(JSON.stringify(C))}
+}
+function render(){
+ const sl=(k,l,mn,mx)=>`<div class="row">${l}<input type="range" min="${mn}" max="${mx}" value="${C[k]}" oninput="set('${k}',+this.value,1)"></div>`;
+ $("#app").innerHTML=`<h1>Настройка виджета</h1><div class="sub">${NAMES[kind]}</div>
+ <div class="wprev" id="pv"></div>
+ <div class="card">${KEYS[kind].map(k=>`<div class="row">${SW[k]}<div class="sw ${C[k]!==false&&C[k]?"on":""}" onclick="set('${k}',!${C[k]!==false&&!!C[k]})"></div></div>`).join("")}</div>
+ <div class="card">${sl("rad","Скругление",0,48)}${sl("alpha","Прозрачность",10,100)}${sl("fs","Размер текста",kind=="fc"?24:28,kind=="ck"?80:64)}</div>
+ <button class="btn" onclick="save()">Сохранить</button><button class="btn t" onclick="try{Cfg.cancel()}catch(e){}">Отмена</button>`;
+ prev();
+}
+palette();render();setInterval(prev,1000);
+</script></body></html>

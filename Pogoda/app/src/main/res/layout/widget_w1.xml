@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent">
+    <ImageView android:id="@+id/bg" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY"/>
+<LinearLayout android:id="@+id/pad" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="horizontal" android:gravity="center_vertical" android:padding="12dp">
+<TextView android:id="@+id/ico" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⛅" android:textColor="#FFFFFF" android:textSize="28sp" android:maxLines="1" android:ellipsize="end" />
+<TextView android:id="@+id/temp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12°" android:textColor="#FFFFFF" android:textSize="30sp" android:maxLines="1" android:ellipsize="end" android:fontFamily="sans-serif-light" android:layout_marginStart="6dp"/>
+<LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_vertical" android:paddingStart="10dp" android:paddingEnd="6dp">
+<TextView android:id="@+id/city" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📍 Москва" android:textColor="#FFFFFF" android:textSize="12sp" android:maxLines="1" android:ellipsize="end" />
+<TextView android:id="@+id/desc" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Облачно" android:textColor="#FFFFFF" android:textSize="13sp" android:maxLines="1" android:ellipsize="end" />
+<TextView android:id="@+id/hl" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="↑3° ↓-1°" android:textColor="#FFFFFF" android:textSize="12sp" android:maxLines="1" android:ellipsize="end" />
+</LinearLayout>
+<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="end">
+<TextClock android:id="@+id/clock" android:layout_width="wrap_content" android:layout_height="wrap_content" android:format24Hour="HH:mm" android:format12Hour="HH:mm" android:textColor="#FFFFFF" android:textSize="22sp" android:includeFontPadding="false" android:fontFamily="sans-serif-light"/>
+<TextClock android:id="@+id/date" android:layout_width="wrap_content" android:layout_height="wrap_content" android:format24Hour="EEE, d MMM" android:format12Hour="EEE, d MMM" android:textColor="#FFFFFF" android:textSize="12sp" android:includeFontPadding="false" />
+</LinearLayout>
+</LinearLayout>
+</FrameLayout>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Погода</string>
+    <string name="d_cw">Часы и погода. Подстраивается под размер: от одной строки до большого окна с прогнозом по часам</string>
+    <string name="d_cp">Погода: температура, состояние и прогноз по часам. Любой размер от 1x1</string>
+    <string name="d_fc">Погода сейчас и прогноз на 5 дней. Любой размер</string>
+    <string name="d_ck">Крупные часы с датой</string>
+</resources>
